@@ -1,0 +1,36 @@
+ CSC 123 VISITOR PATTERN ASSIGNMENT
+
+Please note that any assignment referred to in the video lectures is now
+replaced by this assignment.
+
+For each of the first 3 versions of the expression tree program in C#
+(up to and including the visitor pattern - "csc123 version"), modify
+it modularly by adding, in ONE PROGRAM, both of the following features:
+
+  1.  Add % as a new type of operator (the mod/remainder operator).  
+      This adds a new type of node to the tree.
+
+  2.  Add, in addition to print and eval, a procedure to calculate the
+      size of the tree, such as:
+
+      int size()
+
+  That returns the size of the tree.  The size is the number of nodes.
+
+
+**** ABSOLUTE REQUIREMENT:  YOU MAY NOT TOUCH THE ORIGINAL CODE.  ****
+
+All existing interfaces and classes are to be kept as is.  You should try
+to use them as much as possible.  The only thing you can change is additional
+lines in main to test your additions.  But the existing tests in main must
+still work.  Of course, you will find that for each version, some aspect
+of the extension would be difficult, and that is the whole point: to compare
+the relative advantages of each design.  Summarize in comments what you have
+learned.  For example, for the first, "csc16" version, you may try to extend
+the existing class with a subclass only to find that you will need to redo
+almost everything from scratch by overriding methods in the subclass, and this
+should tell us something about the disadvantages of this design.
+
+
+IF ANY PART OF THE ORIGINAL CODE (other than main) IS MODIFIED, YOU WILL NOT
+GET CREDIT FOR THIS ASSIGNMENT.

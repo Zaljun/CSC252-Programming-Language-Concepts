@@ -1,0 +1,92 @@
+  F# Assignment 3 (2020 version)
+
+The next F# assignment is to do the following, all based on the
+parserm.fs inline-calculator program. 
+
+This assignment asks you to modify the base (parser7e4.fs) without
+editing it in the same manner as in the previous assignment.  See
+video lecture and the sample file parserext.fs for how this is done.
+The idea is to give you a taste of what it'll be like to implement an
+interpreter and compiler.  I've made the assignment so that you won't
+have to do much to the parser, and just focus on extending the eval and
+compile functions in the base program.
+
+The Assignment has several levels:
+
+Level 1, "GEEK":  To reach the minimally acceptable (barely passing) grade
+   of "Geek", you must be able to extend (modularly) the base parser7e4.fs
+   program so it satisfies two requirements:
+   
+   A. Evaluate boolean expressions and if-else expressions.
+   Our only value type is integer, so *we will use zero
+   to represent false and anything non-zero to represent true*.  
+   Specifically, you need to recognize and be able to evaluate
+   the following additional expressions on top of the calculator:
+
+   a=b:  boolean equality, evaluates to 0 or 1 depending on if a and b
+     evaluates to the same integer. for example, 1+2=3 evaluates to 1, but
+     1=2 evals to 0
+
+   a&b:  evaluates to non-zero value (just use 1) if both a and b are
+     non-zero, otherwise, evaluates to 0  (this is boolean and)
+
+   a|b:  boolean or
+
+   !a:   boolean negation (this is a Uniop, the above are Binops)
+
+   if (a) b else c:   if a evaluates to a non-zero value, then this
+     expression evaluates to whatever b evaluates to, otherwise, it
+     evaluates to whatever c evaluates to.
+     for example: if (3+7=6-1) 1 else (10+10)  should eval to 20
+     **It must work for arbitrary expressions a,b,c**
+
+   B. In addition to evaluating boolean expressions and if-else, be
+   able to compile basic arithemetic expressions into am7b assembly,
+   up to but NOT including booleans and if-else expressions.  That is,
+   you must be able to compile whatever the base program could
+   evaluate.  The base program can currently only compile the "+"
+   operator.  Watch video for explanation.
+  
+
+Level 2, "MEGAGEEK": To achieve the rank of "MEGAGEEK", you must first
+   become "geek," and then be able to compile boolean and if-else
+   expressions as well.  These will be trickier to compile and you will
+   need to use the jump instructions (jz, jnz, jmp) that you implemented
+   in the last assignment.  You will also need to use the line-number
+   argument and return value of the 'compile' function.
+
+Level 3 (optional), "GIGAGEEK": To reach highest rank of gigageek
+   (expected of A students), you must first become megageek, then be
+   able to evaluate and compile let expressions, which binds variables
+   to values, as in: (let x=3:x+x) should evaluate to 6.  You will need
+   understand why eval is defined relative to an environment.  You
+   must properly handle the following situation (and similar
+   situations):
+
+   (let x=3:(let x=4:x+x)+x) : this should return 11, not 12 because of
+   the limited scope of the inner let x.
+
+   You will also have to modify the parser to recognize let expressions using
+   a reasonable syntax.  Compiling let-expressions will be even harder:
+   you may replace the compile function entirely with one that takes a
+   map from variables to memory locations (called a 'symbol table'), and
+   partition memory into stack and heap portions.
+
+After submitting your code, you will be given a quiz during which you will have
+to evaluate/compile several sample expreesions, which are **only revealed
+during the quiz** - you need to submit output of your program with trace
+turned on.
+
+Please be warned: although I've given similar assignments in previous classes,
+this version is different and submissions of code that doesn't work with
+this semester's version will be very easily spotted.
+
+
+Additionally, the following is NOT an acceptable way to write the compiler:
+
+compile < fun (exp,ln) ->
+  ("push "+string(eval (Dictionary<string,int>()) exp)+"\n")
+
+You must NEVER mix eval with compile.  Don't call eval inside compile, or
+you will be demoted to the rank of "clueless geek."
+

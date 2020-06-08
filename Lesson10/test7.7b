@@ -1,0 +1,14 @@
+push 5
+pop ax
+# mov ax bx
+push ax
+pop bx
+# eliminate (do nothing)
+push bx
+pop bx 
+push 2
+pop ax
+# mov ax bx
+mov ax bx
+mov bx ax
+push bx

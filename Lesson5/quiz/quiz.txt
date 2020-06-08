@@ -1,0 +1,50 @@
+// If you have trouble reading this on blackboard, goto  cs.hofstra.edu/~cscccl/csc123/opover.cs
+
+// C# supports "operator overloading" (redfining operators such as +) as
+// the following example shows: to overload an operator such as + for
+// objects of some class A, you define a static 'operator+' function
+// inside the class A.
+
+using System;
+
+class A
+{
+   int x;
+   int y;
+   public A(int a, int b) {x=a; y=b;}
+   public void info() { Console.WriteLine("x is "+x+" and y is "+y); }
+
+   // name of overload function is always 'operator' followed by the
+   // operator symbol:
+   public static A operator+(A n, A m)  // overloads +
+   {
+      A sum = new A(n.x+m.x, 0);
+      return sum;
+   }
+}//class A
+
+public class opover
+{
+  public static void Main()
+  {
+      A n = new A(1,10);
+      A m = new A(3,30);
+      A sum = n + m;     // invokes operator+, the overload function
+      sum.info(); // prints x is 4 and y is 0 (operator+ invoked)
+  }
+}
+
+// However, this example does not reveal if operator overloading
+// uses static or dynamic type information to determine if 
+// overloading applies - that is, if the overload function (operator+)
+// can be invoked on the two objects n and m.  You are to conduct an
+// experiment to answer this question by altering the above program.
+// As a hint, you need to use some subclass or superclass of A.
+
+// In other words, the problem is asking you to determine if operator
+// overloading is using static or dynamic dispatch underneath.
+
+// TO GET CREDIT FOR THIS PROBLEM, YOU CAN'T JUST GOOGLE THE ANSWER.  YOU
+// MUST WRITE A PROGRAM TO PROVE THAT IT'S ONE OR THE OTHER.
+// (You can get paritial credit by writing the program and describing
+//  how to interpret the experiment).

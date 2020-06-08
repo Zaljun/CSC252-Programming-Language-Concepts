@@ -1,0 +1,191 @@
+ CSC 7B/FC Programming Assignment (Spring 2020 version)
+ 
+Study the program AM7B.fs, which implements "Abstract Machine AM7B" in F#.
+
+Compile (fsc/fsharpc) AM7B.fs and run the sample program test0.7b with
+
+(mono) AM7B.exe < test1.7b     (feed file to stdin)
+
+You should see that the top of stack holds 20, which is the result of the
+computation.  The assembler skips blank lines and lines that start with '#'.
+
+AM7B.fs should be compiled into AM7B.dll, which you can then use in
+your program (see below). Follow the instructions in the posted video
+concerning the assignment.
+
+*** Be sure the comment out the last line in am7b.fs (trace_advice(run)). ***
+
+Compile to .dll with fsc /t:library or fsharpc --target:library under mono
+If you have trouble creating or using the .dll,
+just compile it together with your program: fsc am7b.fs yourprogram.fs.
+
+The program as given can only handle test1.7b but not the other tests.
+Your assignment is to extend AM7B to a fuller set of instructions so
+that all tests can be executed (except for test2.7b, which is supposed
+to fail).  You can call the new machine AMFC.  In particular, you need
+to be able to handle the following new features
+
+New type of operand: [bx] refers to the memory content at location
+addressed by bx. Because of the way that your imaginary CPU is wired,
+only the bx register can be used to address memory, so [2] and [ax]
+are illegal operands.  The only valid memory operand is [bx].
+
+Type type definition of 'operand' already includes Mem, but note that
+in abstract syntax, [bx] is Mem(Reg("bx")).  The Mem constructor takes
+another operand.  We may in the future expand the instruction set to
+allow other forms of addressing (not just with register bx).  In terms
+of the simulation, this operand refers to the value stored in
+RAM.[REGS.["bx"]].
+
+New Types of Instructions (explained by example):
+
+idiv ax bx  :  This should have the effect of storing the quotient of bx/ax in
+            :  bx and the remainder in dx.  dx thus serves a special purpose.
+	    :  The destination register of this instruction cannot be dx.
+	    :  idiv should be treated separately from the other ALU ops.
+add 3 bx    :  ALU operations can have an immediate (constant) source operand
+mov 3 ax    :  move immediate value to register  (REGS.["ax"] <- 3)
+mov ax bx   :  move register to register  (REGS.["bx"] <- REGS.["ax"])
+mov ax [bx] :  move register to memory location addressed by bx
+               Only register bx can be used to address memory.
+mov [bx] ax :  move from memory to register.
+               Memory to memory ops are not allowed (this is a RISC machine)
+jnz 3       :  jump to instruction 3 if the value in register cx is 
+               not zero (REGS.[2] <> 0).  The first instruction is the 0th.
+jz 0        :  jump to first instruction if cx holds value 0.
+jmp 2       :  unconditional jump to instruction 2 (third instruction)
+	       
+With these instructions your machine becomes a true Turing Machine, with 
+random access to memory and the ability to execute general algorithms.
+
+You may implement other instructions to prove that you're a hot shot
+engineer, but these are the minimum.
+
+Test your machine on test3.7b:  (mono) machine.exe < test3.7b
+
+mov 8 bx
+mov 3 ax
+add 2 ax
+mov ax [bx]
+mov [bx] cx
+push cx
+
+This program should store 5 in RAM.[8] and push 5 on the stack
+
+... and this program (test4.7b):
+
+mov 6 cx
+mov 1 ax
+imul cx ax
+sub 1 cx
+jnz 2
+push ax
+
+This program calculates 6!, and leaves the answer (720) on the stack.
+
+You should also test your program against instructions that have errors:
+
+# stack underflow
+pop ax  
+
+# illegal operands for move
+mov [3] [bx]
+
+# illegal destination for idiv
+idiv ax dx
+
+(strings can be compared using = and <>)
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+   You can't touch my code (do not edit existing functions).
+   You have to add your code modularly using the technique illustrated
+   for aluop - by assigning lambda terms to functions that perform
+   new operations while "inheriting" the original operations.
+
+   There are three functions that you will need to extend:
+
+   execute        (this is the most important function)
+   transoperand   (currently does not recognize memory operands)
+   translate      (translates instructions into abstract syntax)
+
+
+   For execute, the type definition of 'operation' already include the
+   cases for MOV, JZ and JNZ instructions (we will talk about how to
+   extend a type definition modularly later). You just need add cases to
+   execute (modularly like it's done in the aluop example) to recognize
+   these new instructions and perform the corresponding operation.
+   Be careful when implmenting JZ and JNZ: study the executeProg function
+   and note that the pc counter is incremented after the execution of
+   each instruction.
+
+   For transoperand, you just need to translate string "[bx]" into
+   Mem(Reg("bx")), because [bx] is the only valid memory operand.
+   Optionally, you can examine a string s more carefully
+   with rule
+     | s when s.[0]='[' && s.[s.Length-1]=']' && s.Substring(1,2)<>"bx" ->
+       raise (Exception("illegal memory operand"))
+
+   For translate, You need to recognize arrays of the
+   forms [|"mov"; x; y|], [|"jz"; n|], and [|"jnz"; n|] and translate them
+   into abstract instructions such as MOV(Imm(4),Reg("ax")).
+
+   Use the AM7B.fs source code only as a reference.  Do not use it in
+   your code.  Instead, download AM7B.dll, and write a new program with
+   the following structure.
+
+   open System;
+   open CSC7B;;
+
+   // ... add your code here
+
+   trace_advice(run);;   // add this as the last line, which will run program.
+   // alternatively you can just call run() without tracing.
+
+
+   and compile your program with
+
+   fsc (fsharpc on mono)  yourprogram.fs -r AM7B.dll
+
+   And test it with (mono) yourprogram.exe < test4.7b   etc..
+
+   The amount of code you need to write for this part of the assignment
+   is about 50 lines.
+
+
+
+Part 2:  To full credit for the assignment, you must do "peephole optimization":  
+Write a program that optimizes a (operation list) by replacing redundant code
+of the following forms:
+
+push ax
+pop bx      --> replace with single instruction mov ax bx 
+
+push ax
+pop ax      --> eliminate altogether
+
+mov ax bx
+mov bx ax   -->   mov ax bx
+
+Challenge: sequences such as  
+
+push 3
+push 4
+pop ax
+pop bx
+
+should be optimized into
+
+mov 4 ax
+mov 3 bx
+
+To do this assignment you should be aware that pattern matching is possible
+on lists.  For example:
+
+match m with
+  | [] -> "empty list"
+  | [a] -> "singleton list"
+  | (a::b) -> " a cons b, b is arbitrary list
+  | (a::b::c) -> "list with first two elements being a and b"
+  | ("push"::"pop"::c) -> etc...

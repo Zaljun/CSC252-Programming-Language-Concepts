@@ -1,0 +1,7 @@
+# program to calculate 1
+push 5
+pop bx
+add 4 bx
+mov bx ax
+add bx ax
+push ax

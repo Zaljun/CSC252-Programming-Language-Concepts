@@ -1,0 +1,10 @@
+push 0
+push 0
+pop cx
+jnz 8
+pop cx
+jnz 8
+push 0
+jz 9
+push 1
+nop

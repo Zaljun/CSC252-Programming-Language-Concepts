@@ -1,0 +1,5 @@
+# this should not work because of illegal memory ops
+push 4
+pop ax
+mov [3] [cx]
+pop bx

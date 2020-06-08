@@ -1,0 +1,69 @@
+PERL ASSIGNMENT PART II: Closures and Objects
+
+1. Write a "sub"
+
+sub maketoggle { ... }
+
+That returns a pointer to a closure subroutine that returns 1 the first
+time it's called, -1 the second time, 1 the third time, and so on, always
+toggling between the two values.  This should be similar to the makeaccumulator
+function and is intended as a warmup.
+
+2. Using the "bank account" program as a basis, extend "makeaccount" with
+an additional "method" that compares the balances of two accounts.
+
+That is:
+
+  my $acc1 = makeaccount(100);
+  my $acc2 = makeaccount(200);
+  print $acc1->("hasmoremoney")->($acc2);  
+
+should print 0 (for false) because $acc2 points to an account with a higher
+balance.
+
+
+3. protect the "withdraw" method with a password.  If the user
+enters the wrong password three times in a row, call the cops and disable
+the account.  The password should be setup by makeaccount, when the account
+is created.  The the withdraw method should be modified to take a password
+as an additional parameter.
+
+my $acc = makeaccount(100,"xyzzy");  # creates new account with password
+$acc->{"withdraw"}->(50,"abcde");  # prints "wrong password"
+$acc->{"withdraw"}->(50,"xzyzz");  # prints "wrong password"
+$acc->{"withdraw"}->(50,"zzxxy");  # prints "call the cops!"
+$acc->{"withdraw"}->(50,"xyzzy"):  # prints "account disabled"
+
+Be sure to RESET the counter if a correct password was given in three
+tries.
+
+You can also take input from console as follows
+
+print "enter something: "
+my $a = <STDIN>;
+print "you entered ", $a, "\n";
+
+Use this to add a method to allow the password to be changed.
+
+
+4. (Challenge)
+
+Can you find a way to implement INHERITANCE using closures in Perl?  I will
+give the answer to this in the next lecture, but I would like to see if you
+can figure it out yourself.  This is not required, but will make you look
+good.
+
+Implement a "savings account" object that contains, in addition to the
+balance, an interest rate.  Find a way to "override" the deposit function
+so that it adds the interest to the deposited amount.  The idea is to do
+this without re-creating the entire makeaccount method from scratch: you 
+should be able to "inherit" the other methods.
+
+sub makesavings 
+{ ... ??? ... }
+
+An average programmer may try to solve such problems by getting a
+programming language manual and see if there's any "feature" that could
+allow something like this.  An advanced programmer would instead think
+about the nature of problem, and come up with a solution regardless of 
+whether the language contains built-in features to support the paradigm.

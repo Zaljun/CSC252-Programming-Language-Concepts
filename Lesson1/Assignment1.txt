@@ -1,0 +1,55 @@
+# --------------------  Assignment I. Perl Drills.   --------------------
+
+#0. Euclid's algorithm for computing the gcd of two numbers can be
+#   written in C as
+#   int gcd(int a, int b) {if (a==0) return b; else return gcd(b%a,a);}
+#   
+#   Write it in Perl twice, one recursively and one using a while loop.
+#   Don't forget that the {}'s are required in if-else expressions.
+#   Try to use Perl's unique features.  For example, in the while
+#   loop version, you shouldn't have to use any temporary variables.
+#   There's a very similar function in my tutorial that will provide
+#   you with a hint as to what I mean.  Most of the operator symbols 
+#   such as % are the same as in C/Java.
+
+# 1.  Here's how I would implement a function "forall", which checks if all
+#   elements of an array satisfies a boolean property, which is passed in
+#   as a function:
+sub forall
+{
+   my ($f,@A) = @_;  # first argument is the function, second is the array
+   my $answer = 1;   # default answer is true
+   foreach my $x (@A)   # read: "for each element x in array A ..."
+     { if (!($f->($x))) {$answer = 0;} }
+   $answer;
+}
+
+# recursive version:
+sub forall
+{   
+   my ($f,@A) = @_;
+   if (@A==()) {1} 
+   else { my ($carA,@cdrA) = @A;
+          $f->($carA) && forall($f,@cdrA)
+        }
+}
+
+# usage:
+print forall( sub{$_[0]>0}, (3,5,-2,1,0,4) ), ": is false because not all numbers in the list are positive\n";
+
+# Now implement the complementary function "thereexists" which should return 
+# true if and only there is an element in the list that satisfies the property.
+
+
+#2. define a function "doubles," that , given a list L, will return
+#   a list with every element in L repeated, e.g:
+#   doubles(1,2,3) should return (1,1,2,2,3,3).  To do this
+#   you can use "push".  The empty list is just ().  Try the foreach loop.
+#   The function should be non-destructive: it should construct a new list.
+
+
+#3. Write the Perl version of the "howmany" higher-order function
+#   for array/lists.  For example,
+#      howmany( sub{$_[0] > 5}, (3,6,2,8,1) )
+#   should return 2, because there are two numbers in the list that are
+#   greater than 5.

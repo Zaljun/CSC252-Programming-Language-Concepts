@@ -1,0 +1,7 @@
+# program to calculate 6! (=720)
+mov 6 cx
+mov 1 ax
+imul cx ax
+sub 1 cx
+jnz 2
+push ax

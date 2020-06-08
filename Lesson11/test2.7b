@@ -1,0 +1,9 @@
+push 1
+push 0
+pop cx
+pop bx
+add bx cx
+jz 9
+push 1
+jnz 7
+push 0
